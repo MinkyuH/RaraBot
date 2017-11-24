@@ -17,7 +17,7 @@ server.post('/api/messages', connector.listen());
 
 
 
-// Using Rara to demonstarte Business Decisions
+// HeroCards created to help users to choose the options
 var bot = new builder.UniversalBot(connector, function(session){
 		var card = new builder.HeroCard(session)
 		//var constraint = 1;
@@ -32,6 +32,7 @@ var bot = new builder.UniversalBot(connector, function(session){
     // session.send("Hi, What can I help you with today? 1.Account 2. Exchange Rate 3. ABC ");
 });
 
+//Using Rara to demonstarte Business Decisions
 bot.dialog('RaraExecution', [
     function (session) {
 			Rara.FunctionT(bot,session)
@@ -40,4 +41,62 @@ bot.dialog('RaraExecution', [
 .triggerAction({
     matches: /^Hello Rara$/i,
     confirmPrompt: "This will cancel your current request. Are you sure?"
+});
+
+//Excutes when user types Accounts
+bot.dialog('Accounts', [
+	function (session){
+		// session.send("Account page opened Please enter your ID");
+		builder.Prompts.text(session, "Account page opened. Please enter your ID");
+	},
+	function (session,results){
+		// builder.Prompts.text("Account page opened Please enter your ID");
+		session.send('Hit');
+		var userInput = results.response.text;
+		session.send(userInput);
+		session.send('Process');
+
+	}
+])
+.triggerAction({
+	matches: /^Accounts$/i,
+	confirmPrompt: "This will cancel your current request. Are you sure?"
+});
+
+//Exchanged Rate Phase
+bot.dialog('ExchangeRate', [
+	function (session){
+		session.send("Exchange Rate phase");
+	},
+	function (session,results){
+		// builder.Prompts.text("Account page opened Please enter your ID");
+		session.send('Hit');
+		var userInput = results.response.text;
+		session.send(userInput);
+		session.send('Process');
+
+	}
+])
+.triggerAction({
+	matches: /^Exchanged Rate$/i,
+	confirmPrompt: "This will cancel your current request. Are you sure?"
+});
+
+//ABC Phase
+bot.dialog('abcphase', [
+	function (session){
+		session.send("abc phase");
+	},
+	function (session,results){
+		// builder.Prompts.text("Account page opened Please enter your ID");
+		session.send('Hit');
+		var userInput = results.response.text;
+		session.send(userInput);
+		session.send('Process');
+
+	}
+])
+.triggerAction({
+	matches: /^Abc$/i,
+	confirmPrompt: "This will cancel your current request. Are you sure?"
 });
