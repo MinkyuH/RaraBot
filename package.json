@@ -1,0 +1,19 @@
+{
+  "name": "rarabot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MinkyuH/RaraBot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MinkyuH/RaraBot/issues"
+  },
+  "homepage": "https://github.com/MinkyuH/RaraBot#readme"
+}
