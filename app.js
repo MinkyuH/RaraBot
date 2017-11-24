@@ -18,39 +18,26 @@ server.post('/api/messages', connector.listen());
 
 
 // Using Rara to demonstarte Business Decisions
-var bot = new builder.UniversalBot(connector, function (session, next) {
-var userInput = session.message.text;
-if (userInput == "Hello Rara"){
-session.send('Hit');
-Rara.FunctionT(bot,session);
-session.send('process');
-}
-else{
-session.endDialog("Test Minkyu phase1 ");
-bot.dialog("AccountPhase", [
-	function(session, next){
-		session.send("You have successfully made it to the Account Phase");
-		next();
-	},
-	function(session, results, next){
-		var userInput = results.response;
-		session.send('What you typed: ' , userInput);
-	}
+var bot = new builder.UniversalBot(connector, function(session){
+		var card = new builder.HeroCard(session)
+		//var constraint = 1;
+		.title("Welcome Message")
+		.subtitle("Hi, What can I help you with today?")
+		.buttons([
+				builder.CardAction.imBack(session, 'Accounts', '1.Accounts'),
+				builder.CardAction.imBack(session, 'Exchanged Rate' , '2.Exchanged Rate'),
+				builder.CardAction.imBack(session, 'ABC' , '3.ABC')
+		])
+		session.send(new builder.Message(session).addAttachment(card));
+    // session.send("Hi, What can I help you with today? 1.Account 2. Exchange Rate 3. ABC ");
+});
+
+bot.dialog('RaraExecution', [
+    function (session) {
+			Rara.FunctionT(bot,session)
+    }
 ])
 .triggerAction({
-	matches: /^Account$/i,
-	confirmPrompt: "This will cancle your transaction. Are you sure?"
-})
-bot.dialog('help', function (session, args, next) {
-    session.endDialog("HelpPhase");
-})
-.triggerAction({
-    matches: /^help$/i,
-    onSelectAction: (session, args, next) => {
-        // Add the help dialog to the dialog stack
-        // (override the default behavior of replacing the stack)
-        session.beginDialog(args.action, args);
-    }
-});
-}
+    matches: /^Hello Rara$/i,
+    confirmPrompt: "This will cancel your current request. Are you sure?"
 });
