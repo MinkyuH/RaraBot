@@ -1,6 +1,7 @@
 const builder = require('botbuilder');
 const restify = require('restify');
-const Rara = require('./Rara')
+const Rara = require('./Rara');
+const IPB = require('./IPB');
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -26,7 +27,7 @@ var bot = new builder.UniversalBot(connector, function(session){
 		.buttons([
 				builder.CardAction.imBack(session, 'Accounts', '1.Accounts'),
 				builder.CardAction.imBack(session, 'Exchanged Rate' , '2.Exchanged Rate'),
-				builder.CardAction.imBack(session, 'ABC' , '3.ABC')
+				builder.CardAction.imBack(session, 'IPB' , '3.IPB')
 		])
 		session.send(new builder.Message(session).addAttachment(card));
     // session.send("Hi, What can I help you with today? 1.Account 2. Exchange Rate 3. ABC ");
@@ -60,7 +61,7 @@ bot.dialog('Accounts', [
 ])
 .triggerAction({
 	matches: /^Accounts$/i,
-	confirmPrompt: "This will cancel your current request. Are you sure?"
+	confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
 });
 
 //Exchanged Rate Phase
@@ -79,24 +80,17 @@ bot.dialog('ExchangeRate', [
 ])
 .triggerAction({
 	matches: /^Exchanged Rate$/i,
-	confirmPrompt: "This will cancel your current request. Are you sure?"
+	confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
 });
 
-//ABC Phase
-bot.dialog('abcphase', [
-	function (session){
-		session.send("abc phase");
-	},
-	function (session,results){
-		// builder.Prompts.text("Account page opened Please enter your ID");
-		session.send('Hit');
-		var userInput = results.response.text;
-		session.send(userInput);
-		session.send('Process');
+//Intelligent Personal Budgeting Phase
 
-	}
+bot.dialog('IPB',[
+    function (session) {
+			IPB.FunctionStart(bot,session)
+    }
 ])
 .triggerAction({
-	matches: /^Abc$/i,
-	confirmPrompt: "This will cancel your current request. Are you sure?"
+    matches: [/^IPB$/i, /^Intelligent Personal Budgeting$/i],
+    confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
 });
