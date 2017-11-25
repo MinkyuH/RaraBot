@@ -2,6 +2,7 @@ const builder = require('botbuilder');
 const restify = require('restify');
 const Rara = require('./Rara');
 const IPB = require('./IPB');
+const Execution = require('./Execution');
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -91,9 +92,12 @@ bot.dialog('ExchangeRate', [
 
 bot.dialog('IPB',[
     function (session) {
-			IPB.FucntionStart(bot,session)
+			session.send('Hi app.js is running and this is IPB phase');
+			Execution.FucntionStart(bot,session)
+			session.endDialog(); //added
     }
 ])
+//changed from trigger to custom
 .triggerAction({
     matches: [/^IPB$/i, /^Intelligent Personal Budgeting$/i , '3'],
     confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
