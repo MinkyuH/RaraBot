@@ -33,6 +33,10 @@ var bot = new builder.UniversalBot(connector, function(session){
     // session.send("Hi, What can I help you with today? 1.Account 2. Exchange Rate 3. ABC ");
 });
 
+//case
+
+
+
 //Using Rara to demonstarte Business Decisions
 bot.dialog('RaraExecution', [
     function (session) {
@@ -60,7 +64,7 @@ bot.dialog('Accounts', [
 	}
 ])
 .triggerAction({
-	matches: /^Accounts$/i,
+	matches: [/^Accounts$/i,'1'],
 	confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
 });
 
@@ -79,7 +83,7 @@ bot.dialog('ExchangeRate', [
 	}
 ])
 .triggerAction({
-	matches: /^Exchanged Rate$/i,
+	matches: [/^Exchanged Rate$/i,'2'],
 	confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
 });
 
@@ -87,10 +91,10 @@ bot.dialog('ExchangeRate', [
 
 bot.dialog('IPB',[
     function (session) {
-			IPB.FunctionStart(bot,session)
+			IPB.FucntionStart(bot,session)
     }
 ])
 .triggerAction({
-    matches: [/^IPB$/i, /^Intelligent Personal Budgeting$/i],
+    matches: [/^IPB$/i, /^Intelligent Personal Budgeting$/i , '3'],
     confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
 });
