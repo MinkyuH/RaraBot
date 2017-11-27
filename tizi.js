@@ -31,11 +31,15 @@ exports.Initiation = function(bot){
 
 				function(session,args,next){
 
+						session.send("What transaction would you like to update?")
+
 
 					// var userinit = builder.EntityRecognizer.findEntity(args.intent.entities,'ExType');
 					// var userinit2 = builder.EntityRecognizer.findEntity(args.intent.entities, 'Social');
 					// var userinit3 = builder.EntityRecognizer.findEntity(args.intent.entities, 'Eat-out');
 					var res;
+					var exp = builder.EntityRecognizer.findEntity(args.intent.entities,'builtin.currency')
+
 					// var ex = builder.EntityRecognizer.findEntity(args.intent.entities,'Social')
 					// var exp = builder.EntityRecognizer.findEntity(args.intent.entities,'builtin.currency')
 
@@ -51,9 +55,15 @@ exports.Initiation = function(bot){
 					if ((builder.EntityRecognizer.findEntity(args.intent.entities, 'Eat-out') !== null) && (builder.EntityRecognizer.findEntity(args.intent.entities, 'Eat-out') !==undefined)){
 						res = builder.EntityRecognizer.findEntity(args.intent.entities,'Eat-out').type;
 					}
+					if (res === undefined){
+						var res = 'General';
+					}
 
-						console.log(res);
-						// console.log(exp.entity);
+						session.send('%s Expense has increased by %s...',res, exp.entity);
+
+
+						// console.log("this is res ", res);
+						// console.log("This is exp ", exp.entity);
 					})
 
 	.triggerAction({
