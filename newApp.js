@@ -4,6 +4,8 @@ const Rara = require('./Rara');
 const IPB = require('./IPB');
 const run2 = require('./run2');
 const Execution = require('./Execution');
+const tesy = require('./tesy');
+const tizi = require('./tizi');
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
@@ -19,4 +21,5 @@ server.post('/api/messages', connector.listen());
 
 var bot = new builder.UniversalBot(connector);
 
-Execution.Initiation(bot);
+// Execution.Initiation(bot);
+tizi.Initiation(bot);

@@ -27,46 +27,19 @@ exports.Initiation = function(bot){
 				// confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
 			});
 
-			bot.dialog('Update',[
+			bot.dialog('UpdateExpense',
 
 				function(session,args,next){
-					session.dialogData.args = args || {};
-					builder.Prompts.text(session, "What would you like to update?");
-					next(session,args);
 
-				},
+					if (builder.EntityRecognizer.findEntity(args.intent.entities,'Social') === null || builder.EntityRecognizer.findEntity(args.intent.entities,'Social'))
+					// var ex = builder.EntityRecognizer.findEntity(args.intent.entities,'Social')
+					// var exp = builder.EntityRecognizer.findEntity(args.intent.entities,'Social')
+					console.log(ex.type);
+					console.log(exp.type);
 
-				function(session,results,next,args) {
-					var dd = results.response;
-					session.conversationData["df"] = results.response;
-
-					console.log('dd = %s' , dd);
-
-					// var ExType = 'ExType';
-					// var Social = 'Social';
-					// var Eatout = 'Eat-out';
-					// var userinit = builder.EntityRecognizer.findEntity(args.intent.type, ExType);
-					// var userinit2 = builder.EntityRecognizer.findEntity(args.intent.type, Social);
-					// var userinit3 = builder.EntityRecognizer.findEntity(args.intent.type, EatOut);
-
-					// switch()
-
-				// var updateEntity = builder.EntityRecognizer.findEntity(args.intent.type, 'car');
-				var entityMoney =  builder.EntityRecognizer.findEntity(session.dialogData.args.intent.entities, 'Social');
-				console.log(entityMoney.entity);
-					session.send('Hi');
-}
-
-				// if (updateEntity && updateMoney) {
-				// 	session.send ('This expense is for ' , updateEntity , 'and updated by ' , updateMoney);
-				// }
-				// else{
-				// 	session.send('updated by ' , updateMoney);
-				// }
-			// }
-		])
+				})
 	.triggerAction({
-				matches: 'Update'
+				matches: 'UpdateExpense'
 		});
 	}
 
