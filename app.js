@@ -108,6 +108,7 @@ bot.dialog('IPB',[
 
 			// switch (userinit) {
 		 	// case Update:
+				session.send("What transaction would you like to update?")
 			// 	// return session.beginDialog(run2);
 			// 	// return session.beginDialog('aec');
 			// // run2.startDialog(bot,session);

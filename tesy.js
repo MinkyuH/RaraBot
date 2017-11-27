@@ -41,6 +41,12 @@ exports.Initiation = function(bot){
 	.triggerAction({
 				matches: 'UpdateExpense'
 		});
+
+		bot.dialog('U')
+
+
+
+
 	}
 
 

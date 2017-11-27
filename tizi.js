@@ -1,4 +1,5 @@
 const builder = require('botbuilder');
+const transaction = require('./transactions');
 
 exports.Initiation = function(bot){
 		var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/789c9db6-9302-4832-aaa3-672bd0c8e837?subscription-key=4649e4e63c4e4a3f9d633e97f0df546c&verbose=true&timezoneOffset=0&q=');
@@ -21,7 +22,10 @@ exports.Initiation = function(bot){
 		});
 
 		bot.dialog('IPB', function(session, args) {
-      	session.send("What would you like to do? 1.Update 2.View 3.Analysis");
+				session.send("Record your updates on transactions or type analysis to get advice on your financial status");
+				// builder.Prompts.text(session, "What would you like to do? 1.Update 2.View 3.Analysis");
+
+
 			}).triggerAction({
 				matches: [/^IPB$/i, /^Intelligent Personal Budgeting$/i],
 				// confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
@@ -31,10 +35,8 @@ exports.Initiation = function(bot){
 
 				function(session,args,next){
 
-						session.send("What transaction would you like to update?")
 
-
-					// var userinit = builder.EntityRecognizer.findEntity(args.intent.entities,'ExType');
+					// var userinit = builder.EntityRecognizer.findEntity(args.intent.entities,'General');
 					// var userinit2 = builder.EntityRecognizer.findEntity(args.intent.entities, 'Social');
 					// var userinit3 = builder.EntityRecognizer.findEntity(args.intent.entities, 'Eat-out');
 					var res;
@@ -46,8 +48,8 @@ exports.Initiation = function(bot){
 
 
 					//if statement to check intent type.
-					if ((builder.EntityRecognizer.findEntity(args.intent.entities,'ExType') !== null) && (builder.EntityRecognizer.findEntity(args.intent.entities,'ExType') !==undefined)){
-						res = builder.EntityRecognizer.findEntity(args.intent.entities,'ExType').type;
+					if ((builder.EntityRecognizer.findEntity(args.intent.entities,'General') !== null) && (builder.EntityRecognizer.findEntity(args.intent.entities,'General') !==undefined)){
+						res = builder.EntityRecognizer.findEntity(args.intent.entities,'General').type;
 					}
 					if ((builder.EntityRecognizer.findEntity(args.intent.entities, 'Social') !== null) && (builder.EntityRecognizer.findEntity(args.intent.entities, 'Social') !==undefined)){
 						res = builder.EntityRecognizer.findEntity(args.intent.entities,'Social').type;
@@ -69,7 +71,72 @@ exports.Initiation = function(bot){
 	.triggerAction({
 				matches: 'UpdateExpense'
 		});
-	}
+
+		bot.dialog('getExpense', [
+		        function (session, args, next) {
+		            session.dialogData.args = args || {};
+		            if (!session.conversationData["username"]) {
+		                builder.Prompts.text(session, "Enter a username to setup your account.");
+		            } else {
+		                next(); // Skip if we already have this info.
+		            }
+		        },
+		        function (session, results, next) {
+		            // if (!isAttachment(session)) {
+
+		                if (results.response) {
+		                    session.conversationData["username"] = results.response;
+		                }
+
+		                session.send("Retrieving your expense balance: ");
+										transaction.retrieveExpenses(session,session.conversationData["username"]);  // <---- THIS LINE HERE IS WHAT WE NEED
+
+		            // }
+		        }
+		    ]).triggerAction({
+		        matches: 'GetBalance'
+		    });
+
+exports.expenseColumn = function(session, card){
+
+	// session.send(new builder.Message(session).addAttachment(card));
+
+	builder.Prompts.text(session, new builder.Message(session).addAttachment(card));
+
+},
+
+function(session, results){
+
+	session.beginDialog('Social');
+};
+
+bot.dialog('Social', function(session, args){
+	
+})
+.triggerAction({
+	matches: 'Social'
+});
+
+}
+
+
+
+
+
+
+
+	// bot.dialog('View', function(session, args) {
+	// 			session.send("Which Balance would you like to access?");
+	// 			// builder.Prompts.text(session, "What would you like to do? 1.Update 2.View 3.Analysis");
+  //
+  //
+	// 		}).triggerAction({
+	// 			matches: [/^IPB$/i, /^Intelligent Personal Budgeting$/i],
+	// 			// confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
+	// 		});
+
+
+
 
 
 
