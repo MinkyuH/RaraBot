@@ -22,12 +22,12 @@ function handleExpenses(message, session, username) {
 				if (accounttype[account].UserName != null){
 					// var usernameReceived = accounttype[account].UserName;
 	        if (username.toLowerCase() === accounttype[account].UserName.toLowerCase()) {
-						var usernameReceived = accounttype[account].UserName;
-		        var userExpenseType = accounttype[account].ExpenseType;
-						var userBalance = accounttype[account].Balance
+						// var usernameReceived = accounttype[account].UserName;
+		        // var userExpenseType = accounttype[account].ExpenseType;
+						// var userBalance = accounttype[account].Balance
 						var card = new builder.HeroCard(session)
 								.title("Welcome Message")
-								.subtitle("Hi, What can I help you with today?")
+								.subtitle("Please select the expense category you want to retreive")
 								.buttons([
 										builder.CardAction.imBack(session, 'Eat-Out', '1.Eat-Out'),
 										builder.CardAction.imBack(session, 'Social' , '2.Social'),

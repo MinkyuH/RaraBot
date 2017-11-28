@@ -1,5 +1,6 @@
 const builder = require('botbuilder');
 const transaction = require('./transactions');
+const RestClient = require('./API/RestClient');
 
 exports.Initiation = function(bot){
 		var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/789c9db6-9302-4832-aaa3-672bd0c8e837?subscription-key=4649e4e63c4e4a3f9d633e97f0df546c&verbose=true&timezoneOffset=0&q=');
@@ -88,7 +89,7 @@ exports.Initiation = function(bot){
 		                    session.conversationData["username"] = results.response;
 		                }
 
-		                session.send("Retrieving your expense balance: ");
+		                session.send("Which expense account would you like to retrieve: ");
 										transaction.retrieveExpenses(session,session.conversationData["username"]);  // <---- THIS LINE HERE IS WHAT WE NEED
 
 		            // }
@@ -111,12 +112,72 @@ function(session, results){
 };
 
 bot.dialog('Social', function(session, args){
-	
-})
+		var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+		var username = session.conversationData["username"];
+		RestClient.getExpense(url, session, username, HandleSocial);
+	})
+
 .triggerAction({
 	matches: 'Social'
 });
 
+
+function HandleSocial(body, session, username){
+	var contents = JSON.parse(body);
+
+	for (element in contents){
+		var usernameReceived = contents[element].UserName;
+		var userExpenseType = contents[element].ExpenseType;
+		var userBalance = contents[element].Balance
+		// if (username == usernameReceived){
+		}
+
+			console.log('Steven Type is = %s ', userExpenseType)
+			console.log('Steven Balance is =%s ', userBalance)
+
+}
+// }
+
+
+
+	// console.log(contents)
+//
+// bot.dialog('Social', function(session, args){
+// 		var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+// 		var username = session.conversationData["username"];
+// 		RestClient.getExpense(url, session, username, HandleSocial);
+// 	})
+//
+// .triggerAction({
+// 	matches: 'Social'
+// });
+
+
+
+
+
+// function HandleSocial(body, session, username){
+// 	var contents = JSON.parse(body);
+//
+// 	for (element in contents){
+// 		var usernameReceived = contents[element].UserName;
+// 		var userExpenseType = contents[element].ExpenseType;
+// 		var userBalance = contents[element].Balance
+// 		if (username == usernameReceived){
+// 			console.log('Steven Type is = $s ', userExpenseType)
+// 			console.log('Steven Balance is =$s ', userBalance)
+//
+// 		}
+//
+//
+//
+//
+//
+// 	// console.log(contents)
+// }
+//
+//
+// }
 }
 
 
