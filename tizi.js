@@ -8,50 +8,135 @@ exports.Initiation = function(bot){
 
 	bot.dialog('Welcome', function(session, args) {
 		var card = new builder.HeroCard(session)
-	// 		.title("Bot Starting")
-	// 		.subtitle("Hi please Sign-in or Sign-up to use the bot")
-	// 		.buttons([
-	// 					builder.CardAction.imBack(session, 'Sign In' , '1.Sign In'),
-	// 					builder.CardAction.imBack(session, 'Sign Up' , '2.Sign Up')
-	// 		])
-	// 		session.send(new builder.Message(session).addAttachment(card));
-	// 	}).triggerAction({
-	// 				matches: 'Welcome'
-	// 		});
+			.title("Bot Starting")
+			.subtitle("Hi please Sign-in or Sign-up to use the bot")
+			.buttons([
+						builder.CardAction.imBack(session, 'Sign In' , '1.Sign In'),
+						builder.CardAction.imBack(session, 'Sign Up' , '2.Sign Up')
+			])
+			session.send(new builder.Message(session).addAttachment(card));
+		}).triggerAction({
+					matches: 'Welcome'
+			});
   //
+
+			bot.dialog('Sign In', [
+				function (session){
+					// session.send("Account page opened Please enter your ID");
+					builder.Prompts.text(session, "Please enter your ID");
+				},
+				function (session,results){
+
+
+					var userInput = results.response;
+					// var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+					transaction.Login(userInput, session);
+
+				}
+
+
+			])
+			.triggerAction({
+				matches: /^Sign In$/i,
+				// confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
+			});
   //
-	// 		bot.dialog('Sign In', [
-	// 			function (session){
-	// 				// session.send("Account page opened Please enter your ID");
-	// 				builder.Prompts.text(session, "Please enter your ID");
-	// 			},
-	// 			function (session,results){
-	// 				// builder.Prompts.text("Account page opened Please enter your ID");
-	// 				session.send('Hit');
-	// 				var userInput = results.response.text;
-	// 				session.send(userInput);
-	// 				session.send('Process');
-  //
-	// 			}
-  //
-	// 		])
-	// 		.triggerAction({
-	// 			matches: /^Sign In$/i,
-	// 			confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
-	// 		});
-  //
-  //
-	// 			bot.dialog('Sign Up', function(session, args) {
-	// 					session.send("Record your updates on transactions or type analysis to get advice on your financial status");
-	// 					// builder.Prompts.text(session, "What would you like to do? 1.Update 2.View 3.Analysis");
-	// 				}).triggerAction({
-	// 					matches: /^Sign In$/i,
-	// 					// confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
-	// 				});
+
+
+				bot.dialog('Sign Up', [
+					function (session){
+						//msg will be filled out form
+						var url = 'https://rarabot.azurewebsites.net/tables/RaraBot'
+						if (session.message && session.message.value) {
+						// session.send("Account page opened Please enter your ID");
+						// builder.Prompts.text(session, "Please enter your ID");
+							var username = session.message.value.username;
+							var password = session.message.value.password;
+							var dob = session.message.value.dob;
+							RestClient.postSignUp(url,session,username,password,dob, transaction.handleSignUp);
+							console.log("Sign Up calling postSignUp")
+						} else {
+							var signUp = {
+								contentType: "application/vnd.microsoft.card.adaptive",
+								content: {
+									type: "AdaptiveCard",
+									body: [{
+										"type": "TextBlock",
+										"text": "Sign Up Form",
+										"size": "large",
+										"weight": "bolder"
+									},
+									{
+										"type": "TextBlock",
+		                  "text": "Username: "
+									},
+									{
+										"type": "Input.Text",
+	                  "id": "username",
+	                  "placeholder": "Enter your username..."
+									},
+									{
+										"type": "TextBlock",
+		                  "text": "Password: "
+									},
+									{
+										"type": "Input.Text",
+	                  "id": "password",
+	                  "placeholder": "Enter your password..."
+									},
+									{
+										"type": "TextBlock",
+		                  "text": "Date of Birth: "
+									},
+									{
+										"type": "Input.Text",
+	                  "id": "dob",
+	                  "placeholder": "Enter your date of birth (dd/mm/yy)..."
+									}
+								],
+									actions: [{
+		                "type": "Action.Submit",
+		                "title": "Sign Up"
+		            	}]
+								}
+							}
+							session.send(new builder.Message(session).addAttachment(signUp));
+						}
+					},
+					function (session,results){
+
+
+						var userInput = results.response;
+						// var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+						transaction.Login(userInput, session);
+
+					}
+
+
+				])
+				.triggerAction({
+					matches: /^Sign Up$/i,
+					// confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
+				});
 
 
 
 
+
+
+  //
+				// bot.dialog('Sign Up', function(session, args) {
+				// 		session.send("Please type your password");
+				// 		// builder.Prompts.text(session, "What would you like to do? 1.Update 2.View 3.Analysis");
+				// 	}).triggerAction({
+				// 		matches: /^Sign In$/i,
+				// 		// confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
+				// 	});
+
+
+
+				bot.dialog('features', function(session, args) {
+					var card = new builder.HeroCard(session)
 				.title("Welcome Message")
 				.subtitle("Hi, What can I help you with today?")
 				.buttons([
@@ -63,7 +148,7 @@ exports.Initiation = function(bot){
 		    // session.send("Hi, What can I help you with today? 1.Account 2. Exchange Rate 3. ABC ");;
 
 	}).triggerAction({
-				matches: 'Welcome'
+				matches: 'features'
 		});
 
 		bot.dialog('IPB', function(session, args) {
@@ -359,7 +444,7 @@ exports.Initiation = function(bot){
 // 	matches: 'Social'
 // });
 
-x
+
 
 
 

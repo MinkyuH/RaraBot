@@ -6,6 +6,44 @@ var nonLuis = require('./nonLuis');
 
 
 
+ exports.Login = function loginF(userinput, session){
+	 var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+	 rest.Login (userinput, session,url,Logincallback);
+ }
+
+function Logincallback (message, session, userinput) {
+	var loginDetails = JSON.parse(message);
+	var username2;
+	// console.log("abcdfef ===== %s ", message)
+
+	for (var name in loginDetails) {
+		// console.log(loginDetails[name])
+		if (loginDetails[name].UserName) {
+			console.log('here' + userinput)
+			if (loginDetails[name].UserName.toLowerCase() == userinput.toLowerCase()){
+				session.send('Welcome %s', loginDetails[name].UserName);
+				session.beginDialog('features')
+				break;
+			}
+			}
+		}
+		session.send('Please sign up %s', userinput)
+		session.beginDialog('Welcome')
+
+
+		}
+// 	for (var index in message){
+// 		username2 = message[index].UserName;
+// 		if (String(userinput).toLowerCase() === String(username2).toLowerCase()) {
+// 			session.send("Hi %s", userinput)
+// 			session.beginDialog('features')
+// 		}
+// 	}
+// 	if (username2 === null || username2 === undefined){
+// 		session.send("User doesn't exists in the db. Add user first")
+// 		session.endConversation();
+// }
+
 
 
 
@@ -64,6 +102,28 @@ function checkuserexistence (message,session,username,type){
 			rest.postExpense(url, session, username, type, updatefinished)
 		}
 	}
+
+  //
+	// function handleSignUp (message, session, username, password, dob){
+	// 	// var userlist = JSON.parse(message);
+	// 	session.send('Your username is %s', username);
+  //
+		// console.log()
+		// var username2;
+		// var usertype2;
+		// for (var index in message){
+		// 	 username2 = message[index].UserName;
+		// 	 usertype2 = message[index].ExpenseType;
+		// 	if (username.toLowerCase() === String(username2).toLowerCase() && type.toLowerCase() === String(usertype2).toLowerCase()) {
+		// 		session.send("user exists in the db");
+		// 		session.endConversation();
+		// 	}
+		// 	}
+		// 	if (username2 === null || username2 === undefined){
+		// 		console.log('Null detected')
+		// 		rest.postExpense(url, session, username, type, updatefinished)
+		// 	}
+		// }
 
 
 function updatefinished(message,session){
