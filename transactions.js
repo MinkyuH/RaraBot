@@ -2,12 +2,7 @@ var rest = require('./API/RestClient');
 const luis = require('./tizi');
 var builder = require('botbuilder');
 
-// 
-// exports.retreiveExchange = function(session, base, symbol, total) {
-//     var url = 'https://api.fixer.io/latest?base=' + base + '&symbols =' + symbol;
-//     rest.getExchangeData(url, session, ExchangeHandlerResponse, base, symbol, total)
-//
-// }
+
 
 exports.retreiveExchange = function(session, base, symbol, total) {
     var url = 'https://api.fixer.io/latest?base=' + base + '&symbols =' + symbol;
@@ -30,26 +25,6 @@ function ExchangeHandlerResponse(message, session, base, symbol, total) {
     session.delay(2000);
     session.beginDialog("Welcome");
 }
-
-
-
-// function ExchangeHandlerResponse(message, session, base, symbol, total) {
-//     var conversion = JSON.parse(message).rates;
-//     console.log(conversion);
-//     console.log(conversion[symbol]);
-//     var converted = conversion[symbol] * total;
-//     var exchange = total.toString() + ' ' + base + ' is ' + converted.toString() + ' ' + symbol;
-//
-//     var card = new builder.HeroCard(session)
-//         .title('Exchange Rate')
-//         .text(exchange);
-//
-//     session.send(new builder.Message(session).addAttachment(card));
-//     session.delay(2000);
-//     session.beginDialog("Welcome");
-// }
-
-
 
 
 
@@ -84,21 +59,12 @@ function Logincallback (message, session, userinput) {
 
 
 		}
-// 	for (var index in message){
-// 		username2 = message[index].UserName;
-// 		if (String(userinput).toLowerCase() === String(username2).toLowerCase()) {
-// 			session.send("Hi %s", userinput)
-// 			session.beginDialog('features')
-// 		}
-// 	}
-// 	if (username2 === null || username2 === undefined){
-// 		session.send("User doesn't exists in the db. Add user first")
-// 		session.endConversation();
-// }   userinput, session,url,callback
+
 
 exports.manageAccounts = function getData(session){
 	var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
-		rest.Login(session.conversationData["username"], session, url, deleteData);
+	var x = session.conversationData["username"]
+		rest.Login(x, session, url, deleteData);
 };
 
 function deleteData(message,session, userinput) {
@@ -137,10 +103,6 @@ exports.retrieveExpenses = function getExpense(session, username , type, price){
 		}
 };
 
-// exports.readExpense = function getExpense(session, username , type){
-//     var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
-//     rest.getExpense(url, session, username,type, readiness)
-// };
 
 
 function readiness (message,session,username,type,price){
@@ -181,10 +143,12 @@ function checkuserexistence (message,session,username,type,price){
 	var usertype2;
 	var exist = false;
 	for (var index in userlist){
-		 username2 = userlist[index].UserName;
-		 usertype2 = userlist[index].ExpenseType;
-		 username = String(username).toLowerCase();
-		if (username === String(username2).toLowerCase() && type.toLowerCase() === String(usertype2).toLowerCase()) {
+		console.log(userlist[index])
+		 // username2 = userlist[index].UserName;
+		 // usertype2 = userlist[index].ExpenseType;
+		 // username = session.conversationData['username'];
+		 console.log(username);
+		if (username.toLowerCase() === userlist[index].UserName.toLowerCase() && type.toLowerCase() === userlist[index].UserName.toLowerCase()) {
 			var exist = true;
 			price = String(price.substring(1,));
 			console.log(price);
@@ -205,26 +169,7 @@ function checkuserexistence (message,session,username,type,price){
 		session.send("User has been successfully signed in. For security reasons, please log in again.");
 		session.beginDialog('Welcome');
 
-	// var userlist = JSON.parse(message);
-	// // session.send('Your username is %s', username);
-  // //
-	// // 	console.log()
-	// // 	var username2;
-	// // 	var usertype2;
-	// 	for (var index in message){
-	// 		 username2 = message[index].UserName;
-	// 		 password = message[index].Password;
 
-	// 		 usertype2 = message[index].ExpenseType;
-	// 		if (username.toLowerCase() === String(username2).toLowerCase() && type.toLowerCase() === String(usertype2).toLowerCase()) {
-	// 			session.send("user exists in the db");
-	// 			session.endConversation();
-	// 		}
-	// 		}
-	// 		if (username2 === null || username2 === undefined){
-	// 			console.log('Null detected')
-	// 			rest.postExpense(url, session, username, type, updatefinished)
-	// 		}
 		}
 
 

@@ -2,14 +2,14 @@ var request = require('request');
 var transaction = require('../transactions');
 
 
-exports.getExchangeData = function(url, session, callback,total){
-	request.get(url, function(err, res, message){
-		if (err) {
-			console.log(err);
-		}else {
-			callback(body,session,total)
-		}
-	})
+exports.getExchangeData = function(url, session, callback, base, symbol, total) {
+    request.get(url, function(err, res, message) {
+        if (err) {
+            console.log(err);
+        } else {
+            callback(message, session, base, symbol, total)
+        }
+    })
 }
 
 exports.getExpense = function getData(url, session, username,type,price, callback){

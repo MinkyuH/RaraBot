@@ -46,6 +46,7 @@ exports.Initiation = function(bot){
 
 					if (results.response) {
 						session.conversationData["username"] =results.response;
+						console.log(session.conversationData["username"]);
 					}
 					// var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
 					transaction.Login(session, session.conversationData["username"]);
@@ -66,9 +67,14 @@ exports.Initiation = function(bot){
 						if (!isAttachment(session)) {
 						//msg will be filled out form
 						var url = 'https://rarabot.azurewebsites.net/tables/RaraBot'
+						// session.dialogData.args = args || {};
 						if (session.message && session.message.value) {
 						// session.send("Account page opened Please enter your ID");
 						// builder.Prompts.text(session, "Please enter your ID");
+						// session.dialogData.args = args || {};
+
+						session.conversationData['username'] = session.message.value.username;
+
 							var username = session.message.value.username;
 							var password = session.message.value.password;
 							var dob = session.message.value.dob;
@@ -175,7 +181,8 @@ exports.Initiation = function(bot){
 				.buttons([
 						builder.CardAction.imBack(session, 'Accounts', '1.Accounts'),
 						builder.CardAction.imBack(session, 'Exchanged Rate' , '2.Exchanged Rate'),
-						builder.CardAction.imBack(session, 'IPB' , '3.IPB')
+						builder.CardAction.imBack(session, 'IPB' , '3.IPB'),
+						builder.CardAction.imBack(session, 'Help' , '4.Help')
 				])
 				session.send(new builder.Message(session).addAttachment(card));
 		    // session.send("Hi, What can I help you with today? 1.Account 2. Exchange Rate 3. ABC ");;
@@ -183,6 +190,17 @@ exports.Initiation = function(bot){
 	}).triggerAction({
 				matches: 'features'
 		});
+
+		bot.dialog('Help', function(session){
+			session.send("This section is to help users with the functionality of bots. To access our cognitive service, just type in the url of the image and you will get an response from the bot whether the note is $5, $10 , $20 dollar notes!")
+
+
+		}).triggerAction({
+						matches: /^Help$/i,
+						// confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
+		});
+
+
 
 		bot.dialog('Accounts', [function(session, args,next) {
 			if (!isAttachment(session)) {
@@ -652,7 +670,11 @@ bot.dialog('Exchanged Rate', [
 
 									session.send("Get Balance done");
 									session.conversationData["fromGetExpense"] = true;
-									transaction.retrieveExpenses(session,session.conversationData["username"],session.conversationData["Type"],"0");  // <---- THIS LINE HERE IS WHAT WE NEED
+									console.log(session.conversationData)
+									var x = session.conversationData["username"]
+									var y = session.conversationData["Type"]
+									console.log("fifusbv" + x)
+									transaction.retrieveExpenses(session,x,y,"0");  // <---- THIS LINE HERE IS WHAT WE NEED
 
 		            }
 		        }
