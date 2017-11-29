@@ -1,12 +1,19 @@
 const builder = require('botbuilder');
 const transaction = require('./transactions');
 const RestClient = require('./API/RestClient');
+const customVision = require('./CustomVision');
+
 
 exports.Initiation = function(bot){
-		var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/789c9db6-9302-4832-aaa3-672bd0c8e837?subscription-key=4649e4e63c4e4a3f9d633e97f0df546c&verbose=true&timezoneOffset=0&q=');
+
+
+
+		var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/854306ca-8c0e-46f2-9af6-51f503c47752?subscription-key=59b354b113f646a19b41f9b62367cf26&verbose=true&timezoneOffset=0&q=');
 		bot.recognizer(recognizer);
 
 	bot.dialog('Welcome', function(session, args) {
+		if (!isAttachment(session)) {
+
 		var card = new builder.HeroCard(session)
 			.title("Bot Starting")
 			.subtitle("Hi please Sign-in or Sign-up to use the bot")
@@ -14,6 +21,7 @@ exports.Initiation = function(bot){
 						builder.CardAction.imBack(session, 'Sign In' , '1.Sign In'),
 						builder.CardAction.imBack(session, 'Sign Up' , '2.Sign Up')
 			])
+		}
 			session.send(new builder.Message(session).addAttachment(card));
 		}).triggerAction({
 					matches: 'Welcome'
@@ -22,21 +30,26 @@ exports.Initiation = function(bot){
 
 			bot.dialog('Sign In', [
 				function (session,args,next){
+					if (!isAttachment(session)) {
+
 					session.dialogData.args = args || {};
-					if (!session.conversationData["userinput"]){
+					if (!session.conversationData["username"]){
 						builder.Prompts.text(session, "Please enter your ID");
 					} else {
 						next();
 					}
+				}
 					// session.send("Account page opened Please enter your ID");
 				},
 				function (session,results){
+					if (!isAttachment(session)) {
+
 					if (results.response) {
-						session.conversationData["userinput"] =results.response;
+						session.conversationData["username"] =results.response;
 					}
 					// var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
-					transaction.Login(session, session.conversationData["userinput"]);
-
+					transaction.Login(session, session.conversationData["username"]);
+}
 				}
 
 
@@ -50,6 +63,7 @@ exports.Initiation = function(bot){
 
 				bot.dialog('Sign Up', [
 					function (session){
+						if (!isAttachment(session)) {
 						//msg will be filled out form
 						var url = 'https://rarabot.azurewebsites.net/tables/RaraBot'
 						if (session.message && session.message.value) {
@@ -58,7 +72,8 @@ exports.Initiation = function(bot){
 							var username = session.message.value.username;
 							var password = session.message.value.password;
 							var dob = session.message.value.dob;
-							RestClient.postSignUp(url,session,username,password,dob, transaction.handleSignUp);
+							var Social = session.message.value.ExpenseType;
+							RestClient.postSignUp(url,session,username,password,dob,Social, transaction.handleSignUp);
 							// console.log("Sign Up calling postSignUp")
 						} else {
 							var signUp = {
@@ -97,6 +112,15 @@ exports.Initiation = function(bot){
 										"type": "Input.Text",
 	                  "id": "dob",
 	                  "placeholder": "Enter your date of birth (dd/mm/yy)..."
+									},
+									{
+											"type": "TextBlock",
+											"text": "Expense Account Type: "
+									},
+									{
+										"type": "Input.Text",
+										"id": "ExpenseType",
+										"placeholder": "Enter your expense account you with to monitor."
 									}
 								],
 									actions: [{
@@ -107,17 +131,19 @@ exports.Initiation = function(bot){
 							}
 							session.send(new builder.Message(session).addAttachment(signUp));
 						}
+					}
 					},
 					function (session,results){
+						if (!isAttachment(session)) {
 
 
-						var userInput = results.response;
+						var username = results.response;
 						// var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
-						transaction.Login(userInput, session);
+						transaction.Login(username, session);
 
 					}
 
-
+}
 				])
 				.triggerAction({
 					matches: /^Sign Up$/i,
@@ -141,8 +167,10 @@ exports.Initiation = function(bot){
 
 
 				bot.dialog('features', function(session, args) {
+					if (!isAttachment(session)) {
+
 					var card = new builder.HeroCard(session)
-				.title("Welcome Message")
+				.title("Welcome ")
 				.subtitle("Hi, What can I help you with today?")
 				.buttons([
 						builder.CardAction.imBack(session, 'Accounts', '1.Accounts'),
@@ -151,22 +179,40 @@ exports.Initiation = function(bot){
 				])
 				session.send(new builder.Message(session).addAttachment(card));
 		    // session.send("Hi, What can I help you with today? 1.Account 2. Exchange Rate 3. ABC ");;
-
+}
 	}).triggerAction({
 				matches: 'features'
 		});
 
-		bot.dialog('Accounts', function(session, args) {
-			session.send("Accounts Executed");
-			session.beginDialog('features');
-		}).triggerAction({
+		bot.dialog('Accounts', [function(session, args,next) {
+			if (!isAttachment(session)) {
+				session.dialogData.args = args || {};
+				if (!session.conversationData["delType"]){
+					builder.Prompts.text(session, "Are you sure you want to delete this account?");
+				} else {
+					next();
+				}
+			// session.beginDialog('features');
+		}
+	}, function(session,results) {
+		session.conversationData["delType"]=results.response;
+		transaction.manageAccounts(session);
+	session.send("Accounts Executed");
+	}
+]).triggerAction({
 			matches: 'Accounts'
 		});
 
-		bot.dialog('IPB', function(session, args) {
-				session.send("Record your updates on transactions or type analysis to get advice on your financial status");
-				// builder.Prompts.text(session, "What would you like to do? 1.Update 2.View 3.Analysis");
+		// exports.deleteType = function(session){
+		// 	builder.Prompts
+		// }
 
+		bot.dialog('IPB', function(session, args) {
+			if (!isAttachment(session)) {
+
+				session.send("Record your updates on transactions or type view expense balance");
+				// builder.Prompts.text(session, "What would you like to do? 1.Update 2.View 3.Analysis");
+}
 
 			}).triggerAction({
 				matches: [/^IPB$/i, /^Intelligent Personal Budgeting$/i],
@@ -176,6 +222,8 @@ exports.Initiation = function(bot){
 
 			bot.dialog('Exchanged Rate', [
 				function (session){
+					if (!isAttachment(session)) {
+
 					if (session.message && session.message.value) {
 					// session.send("Account page opened Please enter your ID");
 					// builder.Prompts.text(session, "Please enter your ID");
@@ -487,9 +535,11 @@ exports.Initiation = function(bot){
 		 						"title": "Submit"
 		 					}]
 		 				}
+
 		 			};
 		 			session.send(new builder.Message(session).addAttachment(exchange));
-		 		}
+		 		}}
+
 }]).triggerAction({
 	matches: 'ExchangeRate'
 });
@@ -498,6 +548,8 @@ exports.Initiation = function(bot){
 			bot.dialog('UpdateExpense',
 
 				function(session,args,next){
+					if (!isAttachment(session)) {
+
 
 
 					// var userinit = builder.EntityRecognizer.findEntity(args.intent.entities,'General');
@@ -524,10 +576,17 @@ exports.Initiation = function(bot){
 					if (res === undefined){
 						var res = 'General';
 					}
+					if (!session.conversationData["Type"]) {
+						session.conversationData["Type"]=res;
+					}
+					if (!session.conversationData["Price"]) {
+						session.conversationData["Price"]=exp.entity;
+					}
 
-						session.send('%s Expense has increased by %s...',res, exp.entity);
+						session.send('%s Expense has increased by %s...',session.conversationData["Type"],session.conversationData["Price"]);
+						transaction.retrieveExpenses(session,session.conversationData["username"],session.conversationData["Type"],session.conversationData["Price"]);  // <---- THIS LINE HERE IS WHAT WE NEED
 
-
+}
 						// console.log("this is res ", res);
 						// console.log("This is exp ", exp.entity);
 					})
@@ -538,79 +597,110 @@ exports.Initiation = function(bot){
 
 		bot.dialog('getExpense', [
 		        function (session, args, next) {
+							if (!isAttachment(session)) {
+
 		            session.dialogData.args = args || {};
 		            if (!session.conversationData["username"]) {
-		                builder.Prompts.text(session, "Enter a username to setup your account.");
+		                builder.Prompts.text(session, "Please enter your username to continue.");
 		            } else {
 		                next(); // Skip if we already have this info.
 		            }
+							}
 		        },
 
 						function (session, results, next) {
+							if (!isAttachment(session)) {
+
 								// session.dialogData.args = args || {};
 								if (results.response) {
 									session.conversationData["username"]=results.response;
 								}
 								if (!session.conversationData["Type"]) {
-										builder.Prompts.text(session, "Enter expense account type you want to visit.");
+										builder.Prompts.text(session, "Enter the expense account type you want to visit.");
 								} else {
 										next(); // Skip if we already have this info.
 								}
+							}
+						},
+
+
+						function (session, results, next) {
+							if (!isAttachment(session)) {
+
+								// session.dialogData.args = args || {};
+								if (results.response) {
+									session.conversationData["Type"]=results.response;
+								}
+										next(); // Skip if we already have this info.
+
+							}
 						},
 
 
 		        function (session, results, next) {
-		            // if (!isAttachment(session)) {
+		            if (!isAttachment(session)) {
 
-		                if (results.response) {
-		                    session.conversationData["Type"] = results.response;
-		                }
+									session.send("Get Balance done");
+									session.conversationData["fromGetExpense"] = true;
+									transaction.retrieveExpenses(session,session.conversationData["username"],session.conversationData["Type"],"0");  // <---- THIS LINE HERE IS WHAT WE NEED
 
-										transaction.retrieveExpenses(session,session.conversationData["username"],session.conversationData["Type"]);  // <---- THIS LINE HERE IS WHAT WE NEED
-
-		            // }
+		            }
 		        }
 		    ]).triggerAction({
 		        matches: 'GetBalance'
 		    });
 
-				bot.dialog('UserCheck', [
-								function (session, args, next) {
-										session.dialogData.args = args || {};
-										if (!session.conversationData["username"]) {
-												builder.Prompts.text(session, "Enter a username to setup your account.");
-										} else {
-												next(); // Skip if we already have this info.
-										}
-								},
+		function isAttachment(session) {
+    var msg = session.message.text;
+    if ((session.message.attachments && session.message.attachments.length > 0) || msg.includes("http")) {
+        //call custom vision
+        customVision.retreiveMessage(session);
 
-								function (session, results, next) {
-										// session.dialogData.args = args || {};
-										if (results.response) {
-											session.conversationData["username"]=results.response;
-										}
-										if (!session.conversationData["Type"]) {
-												builder.Prompts.text(session, "Enter expense account type you want to visit.");
-										} else {
-												next(); // Skip if we already have this info.
-										}
-								},
+        return true;
+    } else {
+        return false;
+    }
+}
+  //
+	// bot.dialog("AccountTypes",
 
-
-								function (session, results, next) {
-										// if (!isAttachment(session)) {
-
-												if (results.response) {
-														session.conversationData["Type"] = results.response;
-												}
-
-												transaction.readExpense(session,session.conversationData["username"],session.conversationData["Type"]);  // <---- THIS LINE HERE IS WHAT WE NEED
-
-										// }
-								}
-							]).triggerAction({
-					        matches: 'UserCheck'
-					    });
+				// bot.dialog('UserCheck', [
+				// 				function (session, args, next) {
+				// 						session.dialogData.args = args || {};
+				// 						if (!session.conversationData["username"]) {
+				// 								builder.Prompts.text(session, "Enter a username to setup your account.");
+				// 						} else {
+				// 								next(); // Skip if we already have this info.
+				// 						}
+				// 				},
+        //
+				// 				function (session, results, next) {
+				// 						// session.dialogData.args = args || {};
+				// 						if (results.response) {
+				// 							session.conversationData["username"]=results.response;
+				// 						}
+				// 						if (!session.conversationData["Type"]) {
+				// 								builder.Prompts.text(session, "Enter the expense account type you want to visit.");
+				// 						} else {
+				// 								next(); // Skip if we already have this info.
+				// 						}
+				// 				},
+        //
+        //
+				// 				function (session, results, next) {
+				// 						// if (!isAttachment(session)) {
+        //
+				// 								if (results.response) {
+				// 										session.conversationData["Type"] = results.response;
+				// 								}
+        //
+				// 								transaction.readExpense(session,session.conversationData["username"],session.conversationData["Type"]);  // <---- THIS LINE HERE IS WHAT WE NEED
+        //
+				// 						// }
+				// 				}
+				// 			]).triggerAction({
+				// 	        matches: 'UserCheck'
+				// 	    });
 
 //
 // exports.expenseColumn = function(session, card){
