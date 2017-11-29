@@ -4,31 +4,51 @@ var builder = require('botbuilder');
 var nonLuis = require('./nonLuis');
 
 
+exports.retreiveExchange = function(session, base, symbol,total){
+	var url = 'https://api.fixer.io/latest?base=' + base + '&symbols ='+ symbol;
+	rest.getExchangeData(url, session, ExchangeHandlerResponse, total)
+
+}
+
+	function ExchangeHandlerResponse(message, session, total){
+	var conversion = JSON.parse(message).rates;
+	console.log(conversion);
+
+	}
 
 
- exports.Login = function loginF(userinput, session){
+
+
+
+
+ exports.Login = function Login(session, userinput){
 	 var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
 	 rest.Login (userinput, session,url,Logincallback);
  }
 
 function Logincallback (message, session, userinput) {
 	var loginDetails = JSON.parse(message);
+	console.log(loginDetails);
 	var username2;
 	// console.log("abcdfef ===== %s ", message)
-
+	var userExist = false;
 	for (var name in loginDetails) {
 		// console.log(loginDetails[name])
-		if (loginDetails[name].UserName) {
-			console.log('here' + userinput)
-			if (loginDetails[name].UserName.toLowerCase() == userinput.toLowerCase()){
-				session.send('Welcome %s', loginDetails[name].UserName);
-				session.beginDialog('features')
-				break;
-			}
-			}
+
+		if (String(loginDetails[name].UserName).toLowerCase() == userinput.toLowerCase()){
+			session.send('Welcome %s', loginDetails[name].UserName);
+			userExist = true;
+			break;
 		}
-		session.send('Please sign up %s', userinput)
-		session.beginDialog('Welcome')
+
+	}
+	if (userExist) {
+		session.beginDialog('features');
+	} else {
+		session.send('%s does not exist in our database. Please sign up to use our wonderful bot %s', userinput, userinput);
+		session.endConversation();
+		session.beginDialog('Welcome');
+	}
 
 
 		}

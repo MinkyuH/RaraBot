@@ -21,16 +21,21 @@ exports.Initiation = function(bot){
   //
 
 			bot.dialog('Sign In', [
-				function (session){
+				function (session,args,next){
+					session.dialogData.args = args || {};
+					if (!session.conversationData["userinput"]){
+						builder.Prompts.text(session, "Please enter your ID");
+					} else {
+						next();
+					}
 					// session.send("Account page opened Please enter your ID");
-					builder.Prompts.text(session, "Please enter your ID");
 				},
 				function (session,results){
-
-
-					var userInput = results.response;
+					if (results.response) {
+						session.conversationData["userinput"] =results.response;
+					}
 					// var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
-					transaction.Login(userInput, session);
+					transaction.Login(session, session.conversationData["userinput"]);
 
 				}
 
@@ -54,7 +59,7 @@ exports.Initiation = function(bot){
 							var password = session.message.value.password;
 							var dob = session.message.value.dob;
 							RestClient.postSignUp(url,session,username,password,dob, transaction.handleSignUp);
-							console.log("Sign Up calling postSignUp")
+							// console.log("Sign Up calling postSignUp")
 						} else {
 							var signUp = {
 								contentType: "application/vnd.microsoft.card.adaptive",
@@ -151,6 +156,13 @@ exports.Initiation = function(bot){
 				matches: 'features'
 		});
 
+		bot.dialog('Accounts', function(session, args) {
+			session.send("Accounts Executed");
+			session.beginDialog('features');
+		}).triggerAction({
+			matches: 'Accounts'
+		});
+
 		bot.dialog('IPB', function(session, args) {
 				session.send("Record your updates on transactions or type analysis to get advice on your financial status");
 				// builder.Prompts.text(session, "What would you like to do? 1.Update 2.View 3.Analysis");
@@ -160,6 +172,328 @@ exports.Initiation = function(bot){
 				matches: [/^IPB$/i, /^Intelligent Personal Budgeting$/i],
 				// confirmPrompt: "This will cancel your current request. Are you sure? [Yes, No]"
 			});
+
+
+			bot.dialog('Exchanged Rate', [
+				function (session){
+					if (session.message && session.message.value) {
+					// session.send("Account page opened Please enter your ID");
+					// builder.Prompts.text(session, "Please enter your ID");
+						var base = session.message.value.base;
+						var symbol = session.message.value.symbol;
+						var total = session.message.value.total;
+						console.log("%s %s %s",base,symbol,total);
+						transaction.retreiveExchange(session, base, symbol,total);
+					}
+					else {
+		 			var exchange = {
+		 				contentType: "application/vnd.microsoft.card.adaptive",
+		 				content: {
+		 					type: "AdaptiveCard",
+		 					body: [{
+		 						"type": "TextBlock",
+		 						"text": "Currency Converter",
+		 						"size": "large",
+		 						"weight": "bolder"
+		 					},
+		 					{
+		 						"type": "TextBlock",
+		 							"text": "Convert from: "
+		 					},
+		 					{
+		 						"type": "Input.ChoiceSet",
+		 						"id": "base",
+		 						"style:": "compact",
+								"choices": [{
+													"title":"Australia (dollar)",
+													"value": "AUD"
+												},
+													{
+													"title":"Bulgaria (Lev)",
+													"value": "BGN"
+												},
+												{
+													"title":"Brazil (Real)",
+													"value": "BRL"
+												},
+												{
+													"title":"Cananda (Dollar)",
+													"value": "CAD"
+												},
+												{
+													"title":"Switzerland (Franc)",
+													"value": "CHF"
+												},
+											  {
+													"title":"China (Yuan)",
+													"value": "CNY"
+												},
+												{
+													"title":"Czech (Koruna)",
+													"value": "CZK"
+												},
+												{
+													"title":"Denmark (Krone)",
+													"value": "DKK"
+												},
+												{
+													"title":"United Kingdom (Pound)",
+													"value": "GBP"
+												},
+												{
+													"title":"Hong Kong (Dollar)",
+													"value": "HKD"
+												},
+												{
+													"title":"Croatia (Kuna)",
+													"value": "HRK"
+												},
+												{
+													"title":"Hungary (Forint)",
+													"value": "HUF"
+												},
+												{
+													"title":"Indonesia (Rupiah)",
+													"value": "IDR"
+												},
+												{
+													"title":"Israel (Israeli new shekel)",
+													"value": "ILS"
+												},
+												{
+													"title":"India (Rupee)",
+													"value": "INR"
+												},
+												{
+													"title":"Japan (Yen)",
+													"value": "BGN"
+												},
+												{
+													"title":"Republic of Korea (Won)",
+													"value": "KRW"
+												},
+												{
+													"title":"Mexico (Peso)",
+													"value": "MXN"
+												},
+												{
+													"title":"Malaysia (Ringgit)",
+													"value": "MYR"
+												},
+												{
+													"title":"Norway (Krone)",
+													"value": "NOK"
+												},
+												{
+													"title":"New Zealand (Dollar)",
+													"value": "NZD"
+												},
+												{
+													"title":"Philippines (Peso)",
+													"value": "PHP"
+												},
+												{
+													"title":"Bulgarian (BGN)",
+													"value": "BGN"
+												},
+												{
+													"title":"Poland (Zloty)",
+													"value": "BGN"
+												},
+												{
+													"title":"Romania (Leu)",
+													"value": "RON"
+												},
+												{
+													"title":"Russia (Ruble)",
+													"value": "RUB"
+												},
+												{
+													"title":"Sweden (Krona)",
+													"value": "SEK"
+												},
+												{
+													"title":"Singapore (Dollar)",
+													"value": "SGD"
+												},
+												{
+													"title":"Thailand (Baht)",
+													"value": "TGB"
+												},
+												{
+													"title":"Turkey (Lira)",
+													"value": "TRY"
+												},
+												{
+													"title":"United States (Dollar)",
+													"value": "USD"
+												},
+												{
+													"title":"South Africa (Rand)",
+													"value": "ZAR"
+												}
+										]
+										},
+
+		 					{
+		 						"type": "TextBlock",
+		 							"text": "To: "
+		 					},
+		 					{
+		 						"type": "Input.ChoiceSet",
+		 						"id": "symbol",
+		 						"style": "compact",
+								"choices": [{
+													"title":"Australia (dollar)",
+													"value": "AUD"
+												},
+													{
+													"title":"Bulgaria (Lev)",
+													"value": "BGN"
+												},
+												{
+													"title":"Brazil (Real)",
+													"value": "BRL"
+												},
+												{
+													"title":"Cananda (Dollar)",
+													"value": "CAD"
+												},
+												{
+													"title":"Switzerland (Franc)",
+													"value": "CHF"
+												},
+												{
+													"title":"China (Yuan)",
+													"value": "CNY"
+												},
+												{
+													"title":"Czech (Koruna)",
+													"value": "CZK"
+												},
+												{
+													"title":"Denmark (Krone)",
+													"value": "DKK"
+												},
+												{
+													"title":"United Kingdom (Pound)",
+													"value": "GBP"
+												},
+												{
+													"title":"Hong Kong (Dollar)",
+													"value": "HKD"
+												},
+												{
+													"title":"Croatia (Kuna)",
+													"value": "HRK"
+												},
+												{
+													"title":"Hungary (Forint)",
+													"value": "HUF"
+												},
+												{
+													"title":"Indonesia (Rupiah)",
+													"value": "IDR"
+												},
+												{
+													"title":"Israel (Israeli new shekel)",
+													"value": "ILS"
+												},
+												{
+													"title":"India (Rupee)",
+													"value": "INR"
+												},
+												{
+													"title":"Japan (Yen)",
+													"value": "BGN"
+												},
+												{
+													"title":"Republic of Korea (Won)",
+													"value": "KRW"
+												},
+												{
+													"title":"Mexico (Peso)",
+													"value": "MXN"
+												},
+												{
+													"title":"Malaysia (Ringgit)",
+													"value": "MYR"
+												},
+												{
+													"title":"Norway (Krone)",
+													"value": "NOK"
+												},
+												{
+													"title":"New Zealand (Dollar)",
+													"value": "NZD"
+												},
+												{
+													"title":"Philippines (Peso)",
+													"value": "PHP"
+												},
+												{
+													"title":"Bulgarian (BGN)",
+													"value": "BGN"
+												},
+												{
+													"title":"Poland (Zloty)",
+													"value": "BGN"
+												},
+												{
+													"title":"Romania (Leu)",
+													"value": "RON"
+												},
+												{
+													"title":"Russia (Ruble)",
+													"value": "RUB"
+												},
+												{
+													"title":"Sweden (Krona)",
+													"value": "SEK"
+												},
+												{
+													"title":"Singapore (Dollar)",
+													"value": "SGD"
+												},
+												{
+													"title":"Thailand (Baht)",
+													"value": "TGB"
+												},
+												{
+													"title":"Turkey (Lira)",
+													"value": "TRY"
+												},
+												{
+													"title":"United States (Dollar)",
+													"value": "USD"
+												},
+												{
+													"title":"South Africa (Rand)",
+													"value": "ZAR"
+												}]
+		 					},
+		 					{
+		 						"type": "TextBlock",
+		 							"text": "Amount"
+		 					},
+		 					{
+		 						"type": "Input.Text",
+		 						"id": "total",
+		 						"placeholder": "Enter anount to convert..."
+		 					}
+		 				],
+		 					actions: [{
+		 						"type": "Action.Submit",
+		 						"title": "Submit"
+		 					}]
+		 				}
+		 			};
+		 			session.send(new builder.Message(session).addAttachment(exchange));
+		 		}
+}]).triggerAction({
+	matches: 'ExchangeRate'
+});
+
 
 			bot.dialog('UpdateExpense',
 

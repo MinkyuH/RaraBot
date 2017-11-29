@@ -1,6 +1,17 @@
 var request = require('request');
 var transaction = require('../transactions');
 
+
+exports.getExchangeData = function(url, session, callback,total){
+	request.get(url, function(err, res, message){
+		if (err) {
+			console.log(err);
+		}else {
+			callback(message,session,total)
+		}
+	})
+}
+
 exports.getExpense = function getData(url, session, username,type, callback){
     request.get(url, {'headers':{'ZUMO-API-VERSION': '2.0.0'}}, function(err,res,body){
         if(!err && (res.statusCode ===200 || res.statusCode === 201)){
