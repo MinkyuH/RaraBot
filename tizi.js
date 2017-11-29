@@ -176,7 +176,7 @@ exports.Initiation = function(bot){
 				.title("Welcome ")
 				.subtitle("Hi, What can I help you with today?")
 				.buttons([
-						builder.CardAction.imBack(session, 'Accounts', '1.Accounts'),
+						builder.CardAction.imBack(session, 'Accounts Deletion', '1.Accounts'),
 						builder.CardAction.imBack(session, 'Exchanged Rate' , '2.Exchanged Rate'),
 						builder.CardAction.imBack(session, 'IPB' , '3.IPB'),
 						builder.CardAction.imBack(session, 'Help' , '4.Help')
