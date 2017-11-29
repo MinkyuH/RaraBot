@@ -215,7 +215,7 @@ exports.Initiation = function(bot){
 	}, function(session,results) {
 		session.conversationData["delType"]=results.response;
 		transaction.manageAccounts(session);
-	session.send("Accounts Executed");
+	// session.send("Accounts Executed");
 	}
 ]).triggerAction({
 			matches: 'Accounts'
