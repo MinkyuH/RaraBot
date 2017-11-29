@@ -32,7 +32,7 @@ function ExchangeHandlerResponse(message, session, base, symbol, total) {
 
 
  exports.Login = function Login(session, userinput){
-	 var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+	 var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 	 rest.Login (userinput, session,url,Logincallback);
  }
 
@@ -75,14 +75,14 @@ function Logincallback (message, session, userinput) {
 // }   userinput, session,url,callback
 
 exports.manageAccounts = function getData(session){
-	var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+	var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 	var someName = session.conversationData["username"];
 	console.log(someName)
 		rest.Login(someName, session, url, deleteData);
 };
 
 function deleteData(message,session, userinput) {
-	    var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+	    var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 			var userlist = JSON.parse(message);
 			for (var index in userlist) {
 				var id = userlist[index].id;
@@ -108,7 +108,7 @@ function userDelete(message,session) {
 
 
 exports.retrieveExpenses = function getExpense(session, username , type, price){
-    var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+    var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 		if (!session.conversationData["fromGetExpense"]) {
     	rest.getExpense(url, session, username,type,price, checkuserexistence);
 		} else {
@@ -119,14 +119,14 @@ exports.retrieveExpenses = function getExpense(session, username , type, price){
 };
 
 // exports.readExpense = function getExpense(session, username , type){
-//     var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+//     var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 //     rest.getExpense(url, session, username,type, readiness)
 // };
 
 
 function readiness (message,session,username,type,price){
 	console.log("we r in readiness");
-	var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+	var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 	var userlist = JSON.parse(message);
 	console.log("=========%s ",userlist);
 	// console.log()
@@ -154,7 +154,7 @@ function readiness (message,session,username,type,price){
 
 
 function checkuserexistence (message,session,username,type,price){
-	var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+	var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 	var userlist = JSON.parse(message);
 	console.log("=========%s ",message);
 	// console.log()
@@ -301,7 +301,7 @@ function handleExpenses(message, session, username) {
 //
 //
 //  exports.Login = function Login(session, userinput){
-// 	 var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+// 	 var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 // 	 rest.Login (userinput, session,url,Logincallback);
 //  }
 //
@@ -334,13 +334,13 @@ function handleExpenses(message, session, username) {
 //
 //
 // exports.manageAccounts = function getData(session){
-// 	var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+// 	var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 // 	var x = session.conversationData["username"]
 // 		rest.Login(x, session, url, deleteData);
 // };
 //
 // function deleteData(message,session, userinput) {
-// 	    var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+// 	    var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 // 			var userlist = JSON.parse(message);
 // 			for (var index in userlist) {
 // 				var id = userlist[index].id;
@@ -365,7 +365,7 @@ function handleExpenses(message, session, username) {
 //
 //
 // exports.retrieveExpenses = function getExpense(session, username , type, price){
-//     var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+//     var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 // 		if (!session.conversationData["fromGetExpense"]) {
 //     	rest.getExpense(url, session, username,type,price, checkuserexistence);
 // 		} else {
@@ -379,7 +379,7 @@ function handleExpenses(message, session, username) {
 //
 // function readiness (message,session,username,type,price){
 // 	console.log("we r in readiness");
-// 	var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+// 	var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 // 	var userlist = JSON.parse(message);
 // 	console.log("=========%s ",userlist);
 // 	// console.log()
@@ -407,7 +407,7 @@ function handleExpenses(message, session, username) {
 //
 //
 // function checkuserexistence (message,session,username,type,price){
-// 	var url = 'https://rarabot.azurewebsites.net/tables/RaraBot';
+// 	var url = 'http://eriqueoi.azurewebsites.net/tables/rarabot';
 // 	var userlist = JSON.parse(message);
 // 	console.log("=========%s ",message);
 // 	// console.log()
