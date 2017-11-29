@@ -1,15 +1,19 @@
 var rest = require('./API/RestClient');
 const luis = require('./tizi');
 var builder = require('botbuilder');
-var nonLuis = require('./nonLuis');
 
+// 
+// exports.retreiveExchange = function(session, base, symbol, total) {
+//     var url = 'https://api.fixer.io/latest?base=' + base + '&symbols =' + symbol;
+//     rest.getExchangeData(url, session, ExchangeHandlerResponse, base, symbol, total)
+//
+// }
 
 exports.retreiveExchange = function(session, base, symbol, total) {
     var url = 'https://api.fixer.io/latest?base=' + base + '&symbols =' + symbol;
     rest.getExchangeData(url, session, ExchangeHandlerResponse, base, symbol, total)
 
 }
-
 
 function ExchangeHandlerResponse(message, session, base, symbol, total) {
     var conversion = JSON.parse(message).rates;
@@ -26,6 +30,24 @@ function ExchangeHandlerResponse(message, session, base, symbol, total) {
     session.delay(2000);
     session.beginDialog("Welcome");
 }
+
+
+
+// function ExchangeHandlerResponse(message, session, base, symbol, total) {
+//     var conversion = JSON.parse(message).rates;
+//     console.log(conversion);
+//     console.log(conversion[symbol]);
+//     var converted = conversion[symbol] * total;
+//     var exchange = total.toString() + ' ' + base + ' is ' + converted.toString() + ' ' + symbol;
+//
+//     var card = new builder.HeroCard(session)
+//         .title('Exchange Rate')
+//         .text(exchange);
+//
+//     session.send(new builder.Message(session).addAttachment(card));
+//     session.delay(2000);
+//     session.beginDialog("Welcome");
+// }
 
 
 
