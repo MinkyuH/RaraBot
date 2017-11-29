@@ -63,7 +63,7 @@ exports.Initiation = function(bot){
 					function (session){
 						if (!isAttachment(session)) {
 						//msg will be filled out form
-						var url = 'https://rarabot.azurewebsites.net/tables/RaraBot'
+						var url = 'http://msa-rara-bot.azurewebsites.net/tables/RaraBot'
 						// session.dialogData.args = args || {};
 						if (session.message && session.message.value) {
 						// session.send("Account page opened Please enter your ID");
