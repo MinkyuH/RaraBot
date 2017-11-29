@@ -5,9 +5,6 @@ const customVision = require('./CustomVision');
 
 
 exports.Initiation = function(bot){
-
-
-
 		var recognizer = new builder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/854306ca-8c0e-46f2-9af6-51f503c47752?subscription-key=59b354b113f646a19b41f9b62367cf26&verbose=true&timezoneOffset=0&q=');
 		bot.recognizer(recognizer);
 
