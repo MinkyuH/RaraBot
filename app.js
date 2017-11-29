@@ -1,6 +1,6 @@
 const builder = require('botbuilder');
 const restify = require('restify');
-const tizi = require('./tizi');
+const tizi = require('./controller/tizi');
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function() {

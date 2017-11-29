@@ -1,5 +1,5 @@
 var request = require('request');
-var transaction = require('../transactions');
+var transaction = require('../controller/transactions');
 
 
 exports.getExchangeData = function(url, session, callback, base, symbol, total) {
